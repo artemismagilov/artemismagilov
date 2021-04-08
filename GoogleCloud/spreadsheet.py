@@ -11,17 +11,22 @@ parser = argparse.ArgumentParser(epilog="""
 Instruction: add the arguments in strict sequence - [sheet name,sheet name2,...] or all→ [range data,range data2,...]→ 
 secret key→ id sheet in link→ filename(optional). 
 Example: [path]/python3 spreadsheet.py [Sheet1,Sheet2,...] [A1:C7,...] secret_key.json 273839dsdad033901 
-[path/]report.[txt|csv](optional)
+[-flags path/report.{txt, csv} -flags {yes, y, no, n}]-optional
 """)
 
 parser.add_argument("name_sheet", help="name sheet in Google Sheets")
 parser.add_argument("range_data", help="specify the data range in the sheet in Google Sheets")
 parser.add_argument("secret_key", help="the name of the downloaded file with the private key")
 parser.add_argument("id_sheet", help="the id name from your table link")
-parser.add_argument("--file_name", "-f", help="file name with its extension (optional)", default=0)
+parser.add_argument("--file_name", "-f", help="file name with its extension (optional)", default=False)
+parser.add_argument("--update_file", "-u", help="update file  (optional)", default="n",
+                    choices=['yes', 'y', 'no', 'n'])
 args = parser.parse_args()
 
-if os.path.exists(args.secret_key):
+if os.path.isfile(args.file_name) and args.update_file in ('y', 'yes'):
+    f = open(args.file_name, 'w')
+    f.close()
+if os.path.isfile(args.secret_key):
     credentials = ServiceAccountCredentials.from_json_keyfile_name(
         args.secret_key, ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
     )
