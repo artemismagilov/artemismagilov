@@ -40,7 +40,7 @@ if args.name_sheet == 'all':
     try:
         spreadsheet = service.spreadsheets().get(spreadsheetId=args.id_sheet).execute()
     except:
-        print('Wrong id_sheet. The link may be restricted in access ')
+        print(f'Wrong id_sheet-{args.id_sheet}. The link may be restricted in access ')
         quit()
     names = [sheet['properties']['title'] for sheet in spreadsheet['sheets']]
 else:
@@ -60,7 +60,7 @@ for name, ranges in zip(names, ranges_data*len(names)):
     if not lines:
         print(f'Empty sheet with title {name} and with a gap {ranges}')
         quit()
-    if os.path.isfile(args.file_name) and args.file_name != 0:
+    if os.path.isfile(args.file_name) and args.file_name:
         filename, file_extension = os.path.splitext(args.file_name)
         file = open(file=args.file_name, mode='a', newline='')
         if file_extension == '.csv':
@@ -70,9 +70,9 @@ for name, ranges in zip(names, ranges_data*len(names)):
             for line in lines:
                 file.write(' '.join(line) + '\n')
         file.close()
-    elif not os.path.isfile(args.file_name) and args.file_name != 0:
+    elif not os.path.isfile(args.file_name) and args.file_name:
         print(f'No such file: {args.file_name}. Optional-stdout')
         [sys.stdout.write(' '.join(line) + '\n') for line in lines]
-    elif args.file_name == 0:
+    elif not args.file_name:
         print('You did not pass a parameter:file_name. Optional-stdout')
         [sys.stdout.write(' '.join(line) + '\n') for line in lines]
